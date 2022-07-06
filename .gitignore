@@ -1,0 +1,12 @@
+# Modules.
+/node_modules/
+
+# Compiled files.
+/out/
+
+# Configuration.
+config.json
+
+# Others
+.idea/*
+.vscode/*

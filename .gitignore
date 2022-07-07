@@ -10,4 +10,4 @@ config.json
 # Others
 .idea/*
 .vscode/*
-*.tsbuildinfo
+tsconfig.tsbuildinfo

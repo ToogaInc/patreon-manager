@@ -16,8 +16,10 @@ const BASE_SERVER_ID: string = "635413437647683596";
 // The name of the command that lets users sync their Patreon roles.
 const SYNC_CMD_NAME: string = "syncpatreon";
 
+// The base Patreon role
+const BASE_PATREON_ROLE: string = "Patreon";
 
-// Patreon tiers; all servers MUST have these names.
+// All patreon tier roles; all servers MUST have these names.
 const ALL_PATREON: string[] = [
     "Patreon Tier 1",
     "Patreon Tier 2",
@@ -135,6 +137,12 @@ CLIENT.on("guildMemberRemove", async member => {
             const rolesToRemove = server.roles.cache
                 .filter(x => ALL_PATREON.some(y => y === x.name));
             await m.roles.remove(rolesToRemove);
+
+            // Finally, remove the Patreon role
+            const patreonRole = server.roles.cache.find(x => x.name === BASE_PATREON_ROLE);
+            if (patreonRole) {
+                await m.roles.remove(patreonRole);
+            }
         }
         catch (e) {
             // nothing
@@ -175,7 +183,23 @@ async function checkPatreonRoles(memberId: string, fungalServer?: Guild): Promis
     const currPatreonNames = currPatreonRoles.map(x => x[0]);
 
     for await (const [id, server] of CLIENT.guilds.cache) {
+        // For base server, only add/remove patreon role
         if (id === BASE_SERVER_ID) {
+            try {
+                const patreonRole = server.roles.cache.find(x => x.name === BASE_PATREON_ROLE);
+                if (patreonRole) {
+                    if (currPatreonRoles.length === 0) {
+                        await memberFungal.roles.remove(patreonRole);
+                    }
+                    else {
+                        await memberFungal.roles.add(patreonRole);
+                    }
+                }
+            }
+            catch (e) {
+                // Ignore
+            }
+
             continue;
         }
 
@@ -191,6 +215,17 @@ async function checkPatreonRoles(memberId: string, fungalServer?: Guild): Promis
             const rolesToAdd = server.roles.cache
                 .filter(x => currPatreonNames.some(y => y === x.name));
             await m.roles.add(rolesToAdd);
+
+            // Finally, try to add/remove patreon role
+            const patreonRole = server.roles.cache.find(x => x.name === BASE_PATREON_ROLE);
+            if (patreonRole) {
+                if (rolesToAdd.size === 0) {
+                    await m.roles.remove(patreonRole);
+                }
+                else {
+                    await m.roles.add(patreonRole);
+                }
+            }
         }
         catch (e) {
             // nothing

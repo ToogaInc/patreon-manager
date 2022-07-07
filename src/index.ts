@@ -131,7 +131,7 @@ CLIENT.on("guildMemberRemove", async member => {
     for await (const [, server] of CLIENT.guilds.cache) {
         try {
             // First, figure out what roles to remove.
-            let m = await server.members.fetch(member.id);
+            const m = await server.members.fetch(member.id);
             const rolesToRemove = server.roles.cache
                 .filter(x => ALL_PATREON.some(y => y === x.name));
             await m.roles.remove(rolesToRemove);
@@ -181,7 +181,7 @@ async function checkPatreonRoles(memberId: string, fungalServer?: Guild): Promis
 
         try {
             // First, figure out what roles to remove.
-            let m = await server.members.fetch(memberId);
+            const m = await server.members.fetch(memberId);
             const rolesToRemove = server.roles.cache
                 .filter(x => ALL_PATREON.some(y => y === x.name)
                     && !currPatreonNames.some(y => y === x.name));

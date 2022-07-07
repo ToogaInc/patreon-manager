@@ -99,10 +99,11 @@ CLIENT.on("interactionCreate", async i => {
         return;
     }
 
+    await i.deferReply({ ephemeral: true });
+
     if (COOLDOWN.has(i.user.id)) {
-        await i.reply({
-            content: "This command is on cooldown. Try again later.",
-            ephemeral: true
+        await i.editReply({
+            content: "This command is on cooldown. Try again later."
         });
 
         return;
@@ -114,9 +115,8 @@ CLIENT.on("interactionCreate", async i => {
     }, 30 * 1000);
 
     await checkPatreonRoles(i.user.id);
-    await i.reply({
-        content: "Okay, synced successfully.",
-        ephemeral: true
+    await i.editReply({
+        content: "Okay, synced successfully."
     });
 });
 
@@ -197,7 +197,7 @@ async function checkPatreonRoles(memberId: string, fungalServer?: Guild): Promis
                 }
             }
             catch (e) {
-                // Ignore
+                // nothing
             }
 
             continue;
